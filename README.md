@@ -9,18 +9,18 @@ WIP
 ```js
 var mouseOvers = function(overElem, toggleElem) {
   return function(v) {
-    elem = function() { 
-      return _.isString(toggleElem)? v.view().$(toggleElem) : toggleElem;
+    elem = function(e) { 
+      return _.isString(toggleElem)? e.$(toggleElem) : toggleElem;
     }
-    v.event("mouseover " + overElem, function() { elem().show() });
-    v.event("mouseout " + overElem, function() { elem().hide() });
+    v.on("mouseover " + overElem, function() { elem(e).show() });
+    v.on("mouseout " + overElem, function() { elem(e).hide() });
   }
 }
 
 // TestView :: Backbone.View
 var TestView = bQuery.view()
                      .use(mouseOvers(".title", "#titleEdit"))
-                     .event("click", function(){
+                     .on("click", function(){
                        console.log("clicked the test view!");
                      });
                      .make()
