@@ -2,11 +2,12 @@
 
 class bqView
   constructor: (opts={}) ->
-    @_plugins = []
+    bQueryView = ->
+
     @_events = []
     @_properties = []
     @_init = []
-    @_view = opts.view
+    @_view = opts.view or Backbone.View.extend(bQueryView)
 
   validate: ->
 
@@ -27,15 +28,12 @@ class bqView
     @_properties.push { name: p, value: v }
     @
 
-  use: (p) ->
-    @_plugins.push p
-    @
+  use: (p) -> p(@, @view)
 
   view: -> @_view
 
-  run: (v) ->
+  make: (v) ->
     v = v or @view()
-    p(@, v) for p in @_plugins
 
     # set up our events
     v::events = =>
@@ -44,22 +42,17 @@ class bqView
         evts[e.name] = e.fn
       return evts
 
-    for p in @_properties
-      v::[name] = p.value
+    for { name, value } in @_properties
+      v::[name] = value
 
     t = @
-    v::initialize = ->
-      i.call @ for i in t._init
+    v::initialize = (opts={}) ->
+      i.call @, opts for i in t._init
       return
-    @
-
-  make: ->
-    bQueryView = ->
-    v = Backbone.View.extend(bQueryView)
-    @_view = v
-    @run(v)
 
     v
+
+  get: -> make()
 
 
 class bQuery
