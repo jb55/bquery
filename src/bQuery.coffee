@@ -38,8 +38,19 @@ class bqView
     # set up our events
     v::events = =>
       evts = {}
-      for e in @_events
-        evts[e.name] = e.fn
+      groupedEvents = _.groupBy @_events, (e) -> e.name
+
+      # group events with the same key and call them simultaneously
+      for k, v of groupedEvents
+        name = k
+        fns = v
+        if v.length > 1
+          evts[k] = ->
+            fn.apply @, [].slice(arguments) for { fn } in fns
+            return
+        else
+          [{ fn }] = fns
+          evts[k] = fn
       return evts
 
     for { name, value } in @_properties
