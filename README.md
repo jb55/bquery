@@ -18,6 +18,7 @@ var mouseOvers = function(overElem, toggleElem) {
     v.on("mouseout " + overElem, function() { elem(this).hide() });
   }
 }
+```
 
 ## Editable fields
 
