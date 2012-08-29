@@ -6,6 +6,25 @@ WIP
 
 ## Examples
 
+## Data binding from model attributes to DOM
+
+```coffee
+bound = (attr, update) ->
+  return (v) ->
+    v.init -> @model.on "change:#{ attr }", update
+
+# you can abstract over other plugins!
+boundText = (attr, tag) ->
+  return (v) ->
+    bound(attr, (m, nv) => @$(tag).text(nv))(v)
+
+# view with .nameLabel bound to new values of @model.get("name")
+bQuery.view()
+      .use(boundText "name", ".nameLabel")
+      .make()
+```
+
+
 ## Toggle visibility mouseovers
 
 ```js
