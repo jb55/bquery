@@ -11,12 +11,12 @@ WIP
 ```coffee
 bound = (attr, update) ->
   return (v) ->
-    v.init -> @model.on "change:#{ attr }", update
+    v.init -> @model.on "change:#{ attr }", update, @
 
 # you can abstract over other plugins!
 boundText = (attr, tag) ->
   return (v) ->
-    bound(attr, (m, nv) => @$(tag).text(nv))(v)
+    bound(attr, (m, nv) -> @$(tag).text(nv))(v)
 
 # view with .nameLabel bound to new values of @model.get("name")
 bQuery.view()
