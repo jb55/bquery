@@ -8,16 +8,17 @@ bQuery is all about building `Backbone.View`s from small components, compared to
 an opinionated framework approach. To see how this works, let's look at a simple
 example.
 
-Let's say we wanted to create an abstraction that calls a function when a view's
-model changes a particular attribute. Abstractions in bQuery are called `mixins`
-as they are abstractions that you can mix into `bQueryViews`. Here's what it
-looks like:
+Let's say we wanted to to be notified when a model attribute is updated inside a
+view. Let's use a mixin to represent this, here's what it looks like:
 
 ```coffee
 bound = (attr, update) ->
   return (bqView) ->
     bqView.init -> @model.on "change:#{ attr }", update, @
 ```
+
+This simply adds a `this.model.on` call to the constructor of a Backbone.View.
+When the attribute changes the update function will be called.
 
 I will be using coffeescript in my examples because the function syntax is a bit
 nicer for representing bQuery mixins. But javascript would work just as well,
