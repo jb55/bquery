@@ -1,6 +1,6 @@
 
 
-class bqView
+class bQueryView
   constructor: (opts={}) ->
     bQueryView = ->
 
@@ -9,10 +9,6 @@ class bqView
     @_init = []
     @_view = opts.view or Backbone.View.extend(bQueryView)
 
-  validate: ->
-
-  @validateEvents: (evts) ->
-
   init: (f) ->
     @_init.push f
     @
@@ -20,9 +16,6 @@ class bqView
   on: (e, f) ->
     @_events.push { name: e, fn: f }
     @
-
-  tagName: (n) -> @set "tagName", n
-  el:      (n) -> @set "el", n
 
   set: (p, v) ->
     @_properties.push { name: p, value: v }
@@ -64,8 +57,6 @@ class bqView
       return
 
     v
-
-  get: -> make()
 
 
 class bQuery
