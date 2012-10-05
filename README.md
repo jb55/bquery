@@ -9,7 +9,7 @@ an opinionated framework approach. To see how this works, let's look at a simple
 example.
 
 Let's say we wanted to create an abstraction that calls a function when a view's
-model changes a perticular attribute. Abstractions in bQuery are called `mixins`
+model changes a particular attribute. Abstractions in bQuery are called `mixins`
 as they are abstractions that you can mix into `bQueryViews`. Here's what it
 looks like:
 
