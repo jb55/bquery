@@ -28,7 +28,9 @@ class bqView
     @_properties.push { name: p, value: v }
     @
 
-  use: (p) -> p(@, @view)
+  use: (p) ->
+    p(@, @view)
+    @
 
   view: -> @_view
 
