@@ -86,6 +86,12 @@ All bQueryView does is provide a nice declarative way of mixing in functionality
 and setting properties (via `set`). It's simple yet it changes the way you build
 your Backbone apps.
 
+## No more `this` gotchas
+
+Since bquery wires all of the callbacks, you no longer have to worry about
+the "forgot to bind `this`" problem. You still have to remember to
+bind `this` when writing mixins though.
+
 ## Reference
 
 `bQuery.view()`: returns a bQueryView
