@@ -40,10 +40,10 @@ our bQuery.view()'s like so:
 ```coffee
 UserView =
   bQuery.view()
-        .use(bound "name", (user, newName) -> 
+        .use(bound "name", (user, newName) ->
           @$(".userName").text(newName)
         )
-        .use(bound "email", (user, newEmail) -> 
+        .use(bound "email", (user, newEmail) ->
           @$(".userEmail").text(newEmail)
         )
         .make()
@@ -57,7 +57,7 @@ Updating a field with text is a pretty common task so lets abstract it further:
 ```coffee
 boundText = (attr, tag) ->
   return (bqView) ->
-    bound(attr, (model, newValue) -> 
+    bound(attr, (model, newValue) ->
       @$(tag).text(newValue)
     )(bqView)
 ```
@@ -74,6 +74,37 @@ var UserView =
 ```
 
 Ah, much cleaner.
+
+## Wrapping it as a plugin
+
+To turn your mixins into digestable functions for the masses, you can mix them
+directly into the vQuery.view() prototype directly like so:
+
+```coffee
+bQuery.view.mixin("bound", bound)
+bQuery.view.mixin("boundText", boundText)
+```
+
+Now they can can be referenced directly on the bQueryView object, just like
+jQuery plugins:
+
+```coffee
+bQuery.view()
+      .boundText("name", ".userName")
+      .boundText("email", ".userEmail")
+```
+
+Now that we have bound directly on the bQueryView prototype, we could have
+written our `boundText` mixin like so:
+
+```coffee
+boundText = (attr, tag) ->
+  return (bqView) ->
+    bqView.bound attr, (model, newValue) ->
+      @$(tag).text(newValue)
+```
+
+Which cleans up the curried function messiness
 
 ## How it works
 
@@ -96,14 +127,39 @@ bind `this` when writing mixins though.
 
 `bQuery.view()`: returns a bQueryView
 
+`bQuery.view.mixin(name, mixin)`: Add a mixin to the prototype of `bQueryView`.
+This allows you to call the mixin directly by name instead of doing `.use(mixin)`
+all the time.
+
+This makes it easy for libraries to plug themselves into bQuery
+
+e.g.
+
+```coffeescript
+  # example mixin that alerts when you click .alert
+  annoyingAlert = (opts) ->
+    return (v) ->
+      v.on "click .alert", ->
+        alert("hello, " + opts.name)
+      # you can even reference other mixins the same way within a mixin!
+      v.doNothing()
+
+  bQuery.view.mixin("annoying", annoyingAlert);
+  bQuery.view.mixin("doNothing", -> ->)
+
+  bQuery.view()
+        .annoying({ name: "bill" })
+        .doNothing()
+```
+
 ### bQueryView
 
-`.use(mixin)` 
+`.use(mixin)`
 
 Mixin a mixin. A Mixin is a function that takes a (bQueryView, Backbone.View).
 Calling use calls the mixin with the current bQueryView.
 
-`.set(prop, val)` 
+`.set(prop, val)`
 
 Adds a property to the `Backbone.View`'s prototype object. `prop` is string and
 `val` can be anything.
@@ -135,7 +191,7 @@ properties and events.
 ```js
 var mouseOvers = function(overElem, toggleElem) {
   return function(v) {
-    elem = function(t) { 
+    elem = function(t) {
       return _.isString(toggleElem)? t.$(toggleElem) : toggleElem;
     }
     v.on("mouseover " + overElem, function() { elem(this).show() });

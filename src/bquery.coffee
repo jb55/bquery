@@ -1,5 +1,4 @@
 
-
 class bQueryView
   constructor: (opts={}) ->
     bQueryView = ->
@@ -62,4 +61,11 @@ class bQueryView
 class bQuery
   constructor: ->
 
-  @view: -> new bqView
+  @view: -> new bQueryView
+
+bQuery.view.mixin = (name, mixin) ->
+  if bQueryView::[name]
+    unless bQuery.allowOverwrite
+      throw "bQuery plugin with the name '#{ name }' already exists. Set bQuery.allowOverwrite = true to allow overwriting plugins"
+  bQueryView::[name] = (xs...) -> @use mixin(xs...)
+
