@@ -81,8 +81,13 @@ To turn your mixins into digestable functions for the masses, you can mix them
 directly into the vQuery.view() prototype directly like so:
 
 ```coffee
-bQuery.view.mixin("bound", bound)
-bQuery.view.mixin("boundText", boundText)
+
+bQuery.view.mixin({
+    bound: bound
+  , boundText: boundText
+  , doNothing: -> ->
+})
+
 ```
 
 Now they can can be referenced directly on the bQueryView object, just like

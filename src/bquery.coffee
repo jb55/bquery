@@ -64,8 +64,16 @@ class bQuery
   @view: -> new bQueryView
 
 bQuery.view.mixin = (name, mixin) ->
-  if bQueryView::[name]
+  go = (n, m) ->
     unless bQuery.allowOverwrite
-      throw "bQuery plugin with the name '#{ name }' already exists. Set bQuery.allowOverwrite = true to allow overwriting plugins"
-  bQueryView::[name] = (xs...) -> @use mixin(xs...)
+      if bQueryView::[n]
+        throw "bQuery plugin with the name '#{ n }' already exists. Set bQuery.allowOverwrite = true to allow overwriting plugins"
+
+    bQueryView::[n] = (xs...) -> @use m(xs...)
+
+  if typeof name is 'object'
+    for own key, val of name
+      go key, val
+  else
+    go name, mixin
 
