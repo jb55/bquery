@@ -16,6 +16,10 @@ class bQueryView
     @_events.push { name: e, fn: f }
     @
 
+  sets: (p, v) ->
+    @view()[p] = v
+    @
+
   set: (p, v) ->
     @_properties.push { name: p, value: v }
     @
@@ -24,7 +28,11 @@ class bQueryView
     p(@, @view)
     @
 
-  view: -> @_view
+  view: (x) ->
+    if x and _.isFunction(x)
+      x(@_view)
+      return @
+    @_view
 
   make: (v) ->
     v = v or @view()
@@ -36,15 +44,16 @@ class bQueryView
 
       # group events with the same key and call them simultaneously
       for k, v of groupedEvents
-        name = k
-        fns = v
-        if v.length > 1
-          evts[k] = ->
-            fn.apply @, [].slice(arguments) for { fn } in fns
-            return
-        else
-          [{ fn }] = fns
-          evts[k] = fn
+        do (k, v) ->
+          name = k
+          fns = v
+          if v.length > 1
+            evts[k] = ->
+              fn.apply @, [].slice(arguments) for { fn } in fns
+              return
+          else
+            [{ fn }] = fns
+            evts[k] = fn
       return evts
 
     for { name, value } in @_properties
