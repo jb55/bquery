@@ -38,12 +38,15 @@ and there we have it, our first mixin! We can now use our new mixin in any of
 our bQuery.view()'s like so:
 
 ```coffee
+
+bQuery.view.mixin("bound", bound)
+
 UserView =
   bQuery.view()
-        .use(bound "name", (user, newName) ->
+        .bound("name", (user, newName) ->
           @$(".userName").text(newName)
         )
-        .use(bound "email", (user, newEmail) ->
+        .bound("email", (user, newEmail) ->
           @$(".userEmail").text(newEmail)
         )
         .make()
@@ -57,9 +60,10 @@ Updating a field with text is a pretty common task so lets abstract it further:
 ```coffee
 boundText = (attr, tag) ->
   return (bqView) ->
-    bound(attr, (model, newValue) ->
+    bqView.bound attr, (model, newValue) ->
       @$(tag).text(newValue)
-    )(bqView)
+
+bQuery.view.mixin "boundText", boundText
 ```
 
 Notice we're reusing bound from before, but with the specific action of updating
@@ -68,8 +72,8 @@ a dom element's text instead.
 ```js
 var UserView =
   bQuery.view()
-        .use(boundText("name", ".userName"))
-        .use(boundText("email", ".userEmail"))
+        .boundText("name", ".userName")
+        .boundText("email", ".userEmail")
         .make()
 ```
 
@@ -78,10 +82,9 @@ Ah, much cleaner.
 ## Wrapping it as a plugin
 
 To turn your mixins into digestable functions for the masses, you can mix them
-directly into the vQuery.view() prototype directly like so:
+directly into the vQuery.view() prototype all at once like so:
 
 ```coffee
-
 bQuery.view.mixin({
     bound: bound
   , boundText: boundText
@@ -89,27 +92,6 @@ bQuery.view.mixin({
 })
 
 ```
-
-Now they can can be referenced directly on the bQueryView object, just like
-jQuery plugins:
-
-```coffee
-bQuery.view()
-      .boundText("name", ".userName")
-      .boundText("email", ".userEmail")
-```
-
-Now that we have bound directly on the bQueryView prototype, we could have
-written our `boundText` mixin like so:
-
-```coffee
-boundText = (attr, tag) ->
-  return (bqView) ->
-    bqView.bound attr, (model, newValue) ->
-      @$(tag).text(newValue)
-```
-
-Which cleans up the curried function messiness
 
 ## How it works
 
