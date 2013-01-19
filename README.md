@@ -139,6 +139,9 @@ e.g.
         .doNothing()
 ```
 
+`bQuery.view.mixin(mixins)`: Mixin multiple mixins using the dictionary keys as
+the name and values as the mixins
+
 ### bQueryView
 
 `.use(mixin)`
