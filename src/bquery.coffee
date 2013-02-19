@@ -1,4 +1,15 @@
 
+root = exports ? @
+
+unless typeof require is 'undefined'
+  _ = require 'underscore' unless _
+
+# export
+unless typeof exports is 'undefined'
+  bQuery = exports
+else
+  bQuery = root.bQuery = {}
+
 class bQueryView
   constructor: (opts={}) ->
     bQueryView = ->
@@ -66,11 +77,7 @@ class bQueryView
 
     v
 
-
-class bQuery
-  constructor: ->
-
-  @view: -> new bQueryView
+bQuery.view = -> new bQueryView
 
 bQuery.view.mixin = (name, mixin) ->
   go = (n, m) ->
@@ -85,4 +92,3 @@ bQuery.view.mixin = (name, mixin) ->
       go key, val
   else
     go name, mixin
-
