@@ -30,6 +30,11 @@
       return this;
     };
 
+    bQueryView.prototype.sets = function(p, v) {
+      this.view()[p] = v;
+      return this;
+    };
+
     bQueryView.prototype.set = function(p, v) {
       this._properties.push({
         name: p,
@@ -43,7 +48,11 @@
       return this;
     };
 
-    bQueryView.prototype.view = function() {
+    bQueryView.prototype.view = function(x) {
+      if (x && _.isFunction(x)) {
+        x(this._view);
+        return this;
+      }
       return this._view;
     };
 
@@ -52,17 +61,17 @@
         _this = this;
       v = v || this.view();
       v.prototype.events = function() {
-        var evts, fn, fns, groupedEvents, k, name;
+        var evts, groupedEvents, k, _fn;
         evts = {};
         groupedEvents = _.groupBy(_this._events, function(e) {
           return e.name;
         });
-        for (k in groupedEvents) {
-          v = groupedEvents[k];
+        _fn = function(k, v) {
+          var fn, fns, name;
           name = k;
           fns = v;
           if (v.length > 1) {
-            evts[k] = function() {
+            return evts[k] = function() {
               var fn, _i, _len;
               for (_i = 0, _len = fns.length; _i < _len; _i++) {
                 fn = fns[_i].fn;
@@ -71,8 +80,12 @@
             };
           } else {
             fn = fns[0].fn;
-            evts[k] = fn;
+            return evts[k] = fn;
           }
+        };
+        for (k in groupedEvents) {
+          v = groupedEvents[k];
+          _fn(k, v);
         }
         return evts;
       };
